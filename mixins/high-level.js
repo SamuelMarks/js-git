@@ -29,7 +29,7 @@ function highLevel(repo, uName, uPass, hostName) {
   function clone(callback) {
     fetchStream.take(function (err, refs) {
       if (!refs['refs/heads/master']) {
-        return callback('Repo does not have a master branch');
+        return callback(false);
       }
 
       fetchStream.put({
@@ -44,7 +44,7 @@ function highLevel(repo, uName, uPass, hostName) {
       fetchStream.take(function (err, channels) {
         repo.unpack(channels.pack, {}, function () {
           repo.updateRef('refs/heads/master', refs['refs/heads/master'], function () {
-            return callback('Repo is clonned.');
+            return callback(true);
           });
         });
       });
@@ -69,7 +69,7 @@ function highLevel(repo, uName, uPass, hostName) {
 
           repo.saveAs('commit', commitMessage, function(err, commitHash) {
             repo.updateRef('refs/heads/master', commitHash, function(err, res) {
-              return callback('Commit done.');
+              return callback(true);
             });
           });
         });
@@ -98,7 +98,7 @@ function highLevel(repo, uName, uPass, hostName) {
                       stream.take(putHashes);
                     } else {
                       pushStream.put({flush: true});
-                      return callback('Push done.');
+                      return callback(true);
                     }
                   }
 
@@ -123,7 +123,7 @@ function highLevel(repo, uName, uPass, hostName) {
   function resolveRepo(callback) {
     repo.readRef('refs/heads/master', function(err, refHash) {
       repo.loadAs('commit', refHash, function(err, commit) {
-        if (commit === undefined) { return callback(); }
+        if (commit === undefined) { return callback(false); }
 
         var repoStructure = {};
         repo.treeWalk(commit.tree, function(err, item) {
