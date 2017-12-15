@@ -83,7 +83,7 @@ function sendPack(transport, onError) {
 
   function onPush(line) {
     if (line === undefined) return socket.put();
-    if (line === null) {
+    if (line === null || line[0] === null) {
       socket.put(null);
       return api.take(onPack);
     }

@@ -82,7 +82,7 @@ function highLevel(repo, uName, uPass, hostName) {
       repo.loadAs('commit', refHash, function(err, commit) {
         pushStream.take(function() {
           pushStream.put({ oldhash: commit.parents[0], newhash: refHash, ref: 'refs/heads/master' });
-          pushStream.put(null);
+          pushStream.put({0:null});
 
           var hashes = [refHash];
           repo.treeWalk(commit.tree, function(err, item) {
